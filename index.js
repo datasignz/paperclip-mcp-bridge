@@ -105,13 +105,14 @@ function createMcpServer() {
 }
 
 const httpServer = createServer(async (req, res) => {
-  if (req.url === "/health" && req.method === "GET") {
+  const pathname = new URL(req.url || "/", "http://localhost").pathname.replace(/\\/+$/, "") || "/";
+  if ((pathname === "/" || pathname === "/health") && req.method === "GET") {
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify({ ok: true, service: "neuralnext-paperclip-mcp-bridge" }));
     return;
   }
 
-  if (req.url !== "/mcp") {
+  if (pathname !== "/mcp") {
     res.writeHead(404);
     res.end("Not found");
     return;
