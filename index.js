@@ -105,7 +105,8 @@ function createMcpServer() {
 }
 
 const httpServer = createServer(async (req, res) => {
-  const pathname = new URL(req.url || "/", "http://localhost").pathname.replace(/\\/+$/, "") || "/";
+  let pathname = (req.url || "/").split("?")[0];
+  while (pathname.length > 1 && pathname.endsWith("/")) pathname = pathname.slice(0, -1);
   if ((pathname === "/" || pathname === "/health") && req.method === "GET") {
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify({ ok: true, service: "neuralnext-paperclip-mcp-bridge" }));
